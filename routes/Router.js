@@ -45,67 +45,52 @@ const posts = [
 
 
 
-router.get('/posts', (req, res) => {
-
+router.get('/posts', paginatedResults(posts), (req, res) => {
+    res.json(res.paginatedResults);
 })
 
+//middleware...
 
 
+function paginatedResults(model) {
+    return (req, res, next) => {
+        const page = parseInt(req.query.page);
+        const limit = parseInt(req.query.limit);
+        const startIndex = (page - 1) * limit;
+        const endEndex = page * limit;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-router.get('/users', (req, res) => {
-    const page = parseInt(req.query.page);
-    const limit = parseInt(req.query.limit);
-    const startIndex = (page - 1) * limit;
-    const endEndex = page * limit;
-
-    const results = {};
-    if (endEndex < users.length) {
-        results.next = {
-            page: page + 1,
-            limit: limit
+        const results = {};
+        if (endEndex < model.length) {
+            results.next = {
+                page: page + 1,
+                limit: limit
+            }
         }
-    }
 
 
-    if (startIndex > 0) {
-        results.previous = {
-            page: page - 1,
-            limit: limit
+        if (startIndex > 0) {
+            results.previous = {
+                page: page - 1,
+                limit: limit
+            }
         }
+
+
+
+        results.results = model.slice(startIndex, endEndex);
+        res.paginatedResults = results;
+        next();
     }
+}
 
 
 
-    results.results = users.slice(startIndex, endEndex);
-    res.json(results)
+
+
+
+router.get('/users', paginatedResults(users), (req, res) => {
+
+    res.json(res.paginatedResults)
 })
 
 
