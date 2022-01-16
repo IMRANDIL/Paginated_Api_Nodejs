@@ -1,3 +1,5 @@
+const { route } = require('express/lib/application');
+
 const router = require('express').Router();
 //simple one....
 
@@ -22,8 +24,88 @@ const users = [
 
 
 
+const posts = [
+    { id: 1, post: 'post1' },
+    { id: 2, post: 'post2' },
+    { id: 3, post: 'post3' },
+    { id: 4, post: 'post4' },
+    { id: 5, post: 'post5' },
+    { id: 6, post: 'post6' },
+    { id: 7, post: 'post7' },
+    { id: 8, post: 'post8' },
+    { id: 9, post: 'post9' },
+    { id: 10, post: 'post10' },
+    { id: 11, post: 'post11' },
+    { id: 12, post: 'post12' },
+    { id: 13, post: 'post13' },
+    { id: 14, post: 'post14' },
+    { id: 15, post: 'post15' }
+]
+
+
+
+
+router.get('/posts', (req, res) => {
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 router.get('/users', (req, res) => {
-    res.json(users)
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const startIndex = (page - 1) * limit;
+    const endEndex = page * limit;
+
+    const results = {};
+    if (endEndex < users.length) {
+        results.next = {
+            page: page + 1,
+            limit: limit
+        }
+    }
+
+
+    if (startIndex > 0) {
+        results.previous = {
+            page: page - 1,
+            limit: limit
+        }
+    }
+
+
+
+    results.results = users.slice(startIndex, endEndex);
+    res.json(results)
 })
 
 
